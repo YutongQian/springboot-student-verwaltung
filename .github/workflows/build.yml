@@ -1,0 +1,36 @@
+name: Build und Tests
+
+# Laeuft bei jedem Push und Pull Request.
+# Damit ist auf GitHub sichtbar, dass die Tests gruen sind —
+# und niemand muss dafuer lokal Maven installieren.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: JDK 17 einrichten
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Tests ausfuehren
+        run: ./mvnw -B test
+
+      - name: Testergebnisse als Artefakt sichern
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
+          retention-days: 7
