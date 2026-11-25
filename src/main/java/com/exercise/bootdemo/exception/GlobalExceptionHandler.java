@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.stream.Collectors;
 
@@ -42,6 +43,21 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining("; "));
         log.debug("Validierung fehlgeschlagen: {}", message);
         return ResponseEntity.badRequest().body(Response.newFail(message));
+    }
+
+    /**
+     * Unbekannte URL oder fehlende Datei bleibt ein 404.
+     *
+     * Ohne diesen Handler faengt die allgemeine Exception-Regel unten auch
+     * NoResourceFoundException ab und antwortet mit 500. Ein falsch getippter
+     * Pfad waere dann ein "interner Fehler" - sowohl im Log als auch fuer
+     * den Client.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Response<Void>> handleNoResource(NoResourceFoundException ex) {
+        log.debug("Nicht gefunden: {}", ex.getResourcePath());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Response.newFail("Nicht gefunden: " + ex.getResourcePath()));
     }
 
     /** Alles, was nicht vorhergesehen war: 500, aber ohne Stacktrace im Body. */

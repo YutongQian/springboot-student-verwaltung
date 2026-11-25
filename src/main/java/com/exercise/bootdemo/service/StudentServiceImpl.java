@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -37,6 +38,14 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<StudentDTO> getAllStudents() {
+        return studentRepository.findAll().stream()
+                .map(StudentConverter::convertStudent)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public Long addNewStudent(StudentDTO studentDTO) {
         Optional<Student> existing = studentRepository.findByEmail(studentDTO.getEmail());
@@ -57,15 +66,20 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public StudentDTO updateStudentById(long id, String name, String email) {
+    public StudentDTO updateStudentById(long id, StudentDTO studentDTO) {
         Student studentInDb = studentRepository.findById(id)
                 .orElseThrow(() -> new StudentNotFoundException(id));
 
-        if (StringUtils.hasText(name) && !name.equals(studentInDb.getName())) {
-            studentInDb.setName(name);
+        if (StringUtils.hasText(studentDTO.getName())) {
+            studentInDb.setName(studentDTO.getName());
         }
-        if (StringUtils.hasText(email) && !email.equals(studentInDb.getEmail())) {
-            studentInDb.setEmail(email);
+        if (StringUtils.hasText(studentDTO.getEmail())) {
+            studentInDb.setEmail(studentDTO.getEmail());
+        }
+        // age ist ein int in der Entity und kann deshalb nicht "nicht gesetzt"
+        // sein. Ein fehlender Wert (null im DTO) laesst das Feld unveraendert.
+        if (studentDTO.getAge() != null) {
+            studentInDb.setAge(studentDTO.getAge());
         }
 
         // Kein zusaetzliches save(): die Entitaet ist innerhalb der

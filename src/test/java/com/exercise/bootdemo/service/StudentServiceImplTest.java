@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -133,7 +134,10 @@ class StudentServiceImplTest {
         Student existing = studentWith(5L, "Alter Name", "alt@example.com");
         when(studentRepository.findById(5L)).thenReturn(Optional.of(existing));
 
-        StudentDTO result = studentService.updateStudentById(5L, "Neuer Name", null);
+        StudentDTO patch = new StudentDTO();
+        patch.setName("Neuer Name");
+
+        StudentDTO result = studentService.updateStudentById(5L, patch);
 
         assertThat(result.getName()).isEqualTo("Neuer Name");
         // Die E-Mail wurde nicht uebergeben und darf unveraendert bleiben
@@ -146,9 +150,56 @@ class StudentServiceImplTest {
         Student existing = studentWith(6L, "Bleibt", "bleibt@example.com");
         when(studentRepository.findById(6L)).thenReturn(Optional.of(existing));
 
-        StudentDTO result = studentService.updateStudentById(6L, "   ", "");
+        StudentDTO patch = new StudentDTO();
+        patch.setName("   ");
+        patch.setEmail("");
+
+        StudentDTO result = studentService.updateStudentById(6L, patch);
 
         assertThat(result.getName()).isEqualTo("Bleibt");
         assertThat(result.getEmail()).isEqualTo("bleibt@example.com");
+    }
+
+    @Test
+    @DisplayName("updateStudentById aendert auch das Alter")
+    void updateStudentByIdChangesAge() {
+        Student existing = studentWith(8L, "Mit Alter", "alter@example.com");
+        existing.setAge(30);
+        when(studentRepository.findById(8L)).thenReturn(Optional.of(existing));
+
+        StudentDTO patch = new StudentDTO();
+        patch.setAge(31);
+
+        StudentDTO result = studentService.updateStudentById(8L, patch);
+
+        assertThat(result.getAge()).isEqualTo(31);
+        // Name und E-Mail bleiben, weil sie nicht im DTO standen
+        assertThat(result.getName()).isEqualTo("Mit Alter");
+        assertThat(result.getEmail()).isEqualTo("alter@example.com");
+    }
+
+    @Test
+    @DisplayName("getAllStudents liefert alle Eintraege als DTO-Liste")
+    void getAllStudentsReturnsAll() {
+        Student first = studentWith(1L, "Erste", "eins@example.com");
+        first.setAge(22);
+        Student second = studentWith(2L, "Zweite", "zwei@example.com");
+        second.setAge(25);
+
+        when(studentRepository.findAll()).thenReturn(List.of(first, second));
+
+        List<StudentDTO> result = studentService.getAllStudents();
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getName()).isEqualTo("Erste");
+        assertThat(result.get(1).getEmail()).isEqualTo("zwei@example.com");
+    }
+
+    @Test
+    @DisplayName("getAllStudents liefert eine leere Liste, wenn nichts gespeichert ist")
+    void getAllStudentsReturnsEmptyList() {
+        when(studentRepository.findAll()).thenReturn(List.of());
+
+        assertThat(studentService.getAllStudents()).isEmpty();
     }
 }

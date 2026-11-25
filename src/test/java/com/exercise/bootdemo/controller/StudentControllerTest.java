@@ -126,12 +126,35 @@ class StudentControllerTest {
     @Test
     @DisplayName("PUT /student/{id} akzeptiert einen JSON-Body")
     void putAcceptsJsonBody() throws Exception {
-        given(studentService.updateStudentById(anyLong(), any(), any())).willReturn(validDto());
+        given(studentService.updateStudentById(anyLong(), any(StudentDTO.class))).willReturn(validDto());
 
         mockMvc.perform(put("/student/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(validDto())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @DisplayName("GET /student liefert alle Studenten als Liste")
+    void getAllReturnsList() throws Exception {
+        given(studentService.getAllStudents()).willReturn(java.util.List.of(validDto()));
+
+        mockMvc.perform(get("/student"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data[0].email").value("yutong@example.com"));
+    }
+
+    @Test
+    @DisplayName("GET /student liefert eine leere Liste, wenn niemand gespeichert ist")
+    void getAllReturnsEmptyList() throws Exception {
+        given(studentService.getAllStudents()).willReturn(java.util.List.of());
+
+        mockMvc.perform(get("/student"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 }

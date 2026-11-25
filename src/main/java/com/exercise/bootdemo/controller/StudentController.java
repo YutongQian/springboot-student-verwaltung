@@ -6,6 +6,8 @@ import com.exercise.bootdemo.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * REST-Endpunkte fuer Studenten.
  *
@@ -16,6 +18,12 @@ import org.springframework.web.bind.annotation.*;
  *   funktioniert auch mit Umlauten und Sonderzeichen zuverlaessig)
  * - DELETE liefert ein Response statt void, damit alle Endpunkte
  *   dasselbe Format haben
+ *
+ * Ergaenzt fuer die Weboberflaeche (index.html):
+ * - GET /student liefert alle Studenten (ohne diesen Endpunkt muesste
+ *   die Oberflaeche raten, welche IDs existieren)
+ * - PUT gibt das ganze DTO an den Service weiter, damit auch age
+ *   aktualisiert wird
  */
 @RestController
 @RequestMapping("/student")
@@ -25,6 +33,11 @@ public class StudentController {
 
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
+    }
+
+    @GetMapping
+    public Response<List<StudentDTO>> getAllStudents() {
+        return Response.newSuccess(studentService.getAllStudents());
     }
 
     @GetMapping("/{id}")
@@ -46,8 +59,7 @@ public class StudentController {
     @PutMapping("/{id}")
     public Response<StudentDTO> updateStudentById(@PathVariable long id,
                                                   @Valid @RequestBody StudentDTO studentDTO) {
-        return Response.newSuccess(
-                studentService.updateStudentById(id, studentDTO.getName(), studentDTO.getEmail()));
+        return Response.newSuccess(studentService.updateStudentById(id, studentDTO));
     }
 }
 
