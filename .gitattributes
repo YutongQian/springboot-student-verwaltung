@@ -1,11 +1,14 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
 
-# Sprachstatistik auf GitHub: nur Java zaehlen.
-# Ohne diese Zeilen wertet GitHub den Maven-Wrapper als Shell-Skript
-# und die Sprachverteilung im Repository wird verzerrt.
+# Sprachstatistik auf GitHub.
+# Der Maven-Wrapper wird als Shell-Skript erkannt und wuerde die Verteilung
+# verzerren, deshalb nicht mitzaehlen. Konfigurationsdateien ebenso.
+# HTML, CSS und JavaScript in src/main/resources/static ZAEHLEN mit:
+# seit dem Frontend ist das ein echter Teil des Projekts und soll sichtbar sein.
 *.java       linguist-language=Java
 *.xml        linguist-detectable=false
 *.properties linguist-detectable=false
 /mvnw        linguist-detectable=false
 *.cmd        linguist-detectable=false
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Studentenverwaltung</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>Studentenverwaltung</h1>
+    <p class="sub">Spring Boot &middot; JPA &middot; REST</p>
+</header>
+
+<main>
+
+    <!-- Meldungen: Erfolg und Fehler laufen ueber dieselbe Leiste -->
+    <div id="meldung" class="meldung" role="status" aria-live="polite" hidden></div>
+
+    <!-- Formular: dient gleichzeitig zum Anlegen und zum Bearbeiten -->
+    <section class="karte">
+        <h2 id="formular-titel">Neuen Studenten anlegen</h2>
+
+        <form id="formular" novalidate>
+            <input type="hidden" id="feld-id">
+
+            <div class="feld">
+                <label for="feld-name">Name</label>
+                <input type="text" id="feld-name" maxlength="100" autocomplete="off" required>
+                <span class="hinweis" data-fuer="feld-name"></span>
+            </div>
+
+            <div class="feld">
+                <label for="feld-email">E-Mail</label>
+                <input type="email" id="feld-email" autocomplete="off" required>
+                <span class="hinweis" data-fuer="feld-email"></span>
+            </div>
+
+            <div class="feld">
+                <label for="feld-alter">Alter</label>
+                <input type="number" id="feld-alter" min="1" max="150" step="1">
+                <span class="hinweis" data-fuer="feld-alter"></span>
+            </div>
+
+            <div class="aktionen">
+                <button type="submit" id="btn-speichern" class="btn btn-primaer">Anlegen</button>
+                <button type="button" id="btn-abbrechen" class="btn btn-zweit" hidden>Abbrechen</button>
+                <button type="button" id="btn-neu-laden" class="btn btn-zweit">Neu laden</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Tabelle -->
+    <section class="karte">
+        <div class="kopfzeile">
+            <h2>Alle Studenten</h2>
+            <span id="anzahl" class="zaehler"></span>
+        </div>
+
+        <div class="suche">
+            <label for="feld-suche">Filtern</label>
+            <input type="search" id="feld-suche" placeholder="Name oder E-Mail" autocomplete="off">
+        </div>
+
+        <table id="tabelle">
+            <thead>
+            <tr>
+                <th class="sp-id">ID</th>
+                <th class="sp-name">Name</th>
+                <th class="sp-email">E-Mail</th>
+                <th class="sp-alter">Alter</th>
+                <th class="sp-aktion">Aktion</th>
+            </tr>
+            </thead>
+            <tbody id="tabellen-koerper"></tbody>
+        </table>
+
+        <p id="leer" class="leer" hidden>Noch keine Studenten gespeichert.</p>
+    </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

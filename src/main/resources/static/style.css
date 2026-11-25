@@ -1,0 +1,367 @@
+/* ---------------------------------------------------------------
+   Studentenverwaltung – Stylesheet
+   Bewusst ohne Framework: eine Datei, keine Abhaengigkeiten,
+   keine Build-Schritte.
+   --------------------------------------------------------------- */
+
+:root {
+    --hintergrund: #f4f5f7;
+    --karte: #ffffff;
+    --rand: #e1e4e8;
+    --text: #1f2328;
+    --text-leise: #656d76;
+    --primaer: #2563eb;
+    --primaer-dunkel: #1d4ed8;
+    --gefahr: #dc2626;
+    --erfolg: #15803d;
+    --erfolg-hell: #dcfce7;
+    --fehler-hell: #fee2e2;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0 1rem 3rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--hintergrund);
+}
+
+header {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 2rem 0 1rem;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+}
+
+header .sub {
+    margin: 0.15rem 0 0;
+    color: var(--text-leise);
+    font-size: 0.85rem;
+}
+
+main {
+    max-width: 980px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.karte {
+    background: var(--karte);
+    border: 1px solid var(--rand);
+    border-radius: 10px;
+    padding: 1.25rem 1.4rem 1.4rem;
+}
+
+.karte h2 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+/* --------------------------- Formular --------------------------- */
+
+#formular {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem 1rem;
+}
+
+.feld {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+}
+
+.feld label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-leise);
+}
+
+.feld input {
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    font: inherit;
+    font-size: 0.92rem;
+    color: var(--text);
+    background: #fff;
+    border: 1px solid var(--rand);
+    border-radius: 6px;
+}
+
+.feld input:focus {
+    outline: 2px solid var(--primaer);
+    outline-offset: -1px;
+    border-color: var(--primaer);
+}
+
+.feld.ungueltig input {
+    border-color: var(--gefahr);
+    background: #fff5f5;
+}
+
+.hinweis {
+    min-height: 1rem;
+    font-size: 0.75rem;
+    color: var(--gefahr);
+}
+
+.aktionen {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.2rem;
+}
+
+
+/* --------------------------- Buttons ---------------------------- */
+
+.btn {
+    padding: 0.5rem 1rem;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.btn-primaer {
+    color: #fff;
+    background: var(--primaer);
+}
+
+.btn-primaer:hover:not(:disabled) {
+    background: var(--primaer-dunkel);
+}
+
+.btn-zweit {
+    color: var(--text);
+    background: #fff;
+    border-color: var(--rand);
+}
+
+.btn-zweit:hover:not(:disabled) {
+    background: #f6f8fa;
+}
+
+.btn-klein {
+    padding: 0.28rem 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 5px;
+    border: 1px solid var(--rand);
+    background: #fff;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.btn-klein:hover {
+    background: #f6f8fa;
+}
+
+.btn-klein.loeschen {
+    color: var(--gefahr);
+    border-color: #f5c2c2;
+}
+
+.btn-klein.loeschen:hover {
+    background: #fff5f5;
+}
+
+/* --------------------------- Meldungen -------------------------- */
+
+.meldung {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+
+.meldung.erfolg {
+    color: var(--erfolg);
+    background: var(--erfolg-hell);
+    border-color: #bbf7d0;
+}
+
+.meldung.fehler {
+    color: var(--gefahr);
+    background: var(--fehler-hell);
+    border-color: #fecaca;
+}
+
+
+/* --------------------------- Tabelle ---------------------------- */
+
+.kopfzeile {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+}
+
+.kopfzeile h2 {
+    margin: 0;
+}
+
+.zaehler {
+    font-size: 0.8rem;
+    color: var(--text-leise);
+}
+
+.suche {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.9rem;
+}
+
+.suche label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-leise);
+}
+
+.suche input {
+    flex: 1;
+    max-width: 320px;
+    padding: 0.4rem 0.6rem;
+    font: inherit;
+    font-size: 0.88rem;
+    border: 1px solid var(--rand);
+    border-radius: 6px;
+}
+
+.suche input:focus {
+    outline: 2px solid var(--primaer);
+    outline-offset: -1px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+thead th {
+    text-align: left;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-leise);
+    border-bottom: 2px solid var(--rand);
+    white-space: nowrap;
+}
+
+tbody td {
+    padding: 0.55rem 0.6rem;
+    border-bottom: 1px solid #f0f2f4;
+    vertical-align: middle;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background: #fafbfc;
+}
+
+tbody tr.aktiv {
+    background: #eff6ff;
+}
+
+.sp-id {
+    width: 4rem;
+    color: var(--text-leise);
+    font-variant-numeric: tabular-nums;
+}
+
+.sp-alter {
+    width: 5rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.sp-aktion {
+    width: 10rem;
+    text-align: right;
+}
+
+td.sp-aktion {
+    white-space: nowrap;
+}
+
+.leer {
+    margin: 1rem 0 0;
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--text-leise);
+    font-size: 0.88rem;
+    background: #fafbfc;
+    border: 1px dashed var(--rand);
+    border-radius: 8px;
+}
+
+
+/* --------------------------- Mobil ------------------------------ */
+
+@media (max-width: 720px) {
+    #formular {
+        grid-template-columns: 1fr;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tbody td {
+        display: block;
+        padding: 0.25rem 0.6rem;
+    }
+
+    tbody tr {
+        display: block;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid var(--rand);
+    }
+
+    td.sp-aktion {
+        text-align: left;
+        padding-top: 0.5rem;
+    }
+
+    tbody td::before {
+        content: attr(data-label);
+        display: inline-block;
+        min-width: 4.5rem;
+        font-size: 0.75rem;
+        font-weight: 650;
+        color: var(--text-leise);
+    }
+}

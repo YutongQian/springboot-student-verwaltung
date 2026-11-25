@@ -5,6 +5,10 @@ Studenten abbildet. Das Projekt ist als Lern- und Nachweisprojekt
 entstanden: Es zeigt Schichtentrennung, Bean Validation, zentrale
 Fehlerbehandlung und automatisierte Tests.
 
+Die Oberfläche läuft ohne Build-Schritt direkt aus dem Spring-Boot-Prozess:
+
+![Übersicht](docs/screenshot-uebersicht.png)
+
 ---
 
 ## Technische Angaben
@@ -15,6 +19,7 @@ Fehlerbehandlung und automatisierte Tests.
 | Framework | Spring Boot 4.2.0 |
 | Persistenz | Spring Data JPA / Hibernate |
 | Datenbank | MySQL (Produktion), H2 im Test |
+| Frontend | HTML, CSS, JavaScript – ohne Framework |
 | Build | Maven |
 | Tests | JUnit 5, Mockito, MockMvc, AssertJ |
 
@@ -51,10 +56,12 @@ eine API-Änderung.
 
 | Methode | Pfad | Beschreibung |
 |---|---|---|
+| GET | `/student` | Alle Studenten als Liste |
 | GET | `/student/{id}` | Einen Studenten lesen |
 | POST | `/student` | Neuen Studenten anlegen |
 | PUT | `/student/{id}` | Studenten ändern (JSON-Body) |
 | DELETE | `/student/{id}` | Studenten löschen |
+| GET | `/` | Weboberfläche (`static/index.html`) |
 | GET | `/hello` | Smoke-Test |
 
 Alle Antworten haben dasselbe Format:
@@ -86,6 +93,7 @@ Bei Fehlern:
 | Student existiert nicht | 404 | `StudentNotFoundException` |
 | E-Mail bereits vergeben | 409 | `EmailAlreadyUsedException` |
 | Body ungültig (leer, E-Mail fehlt) | 400 | `MethodArgumentNotValidException` |
+| Unbekannte URL oder Datei | 404 | `NoResourceFoundException` |
 | Unerwarteter Fehler | 500 | `Exception` |
 
 Zentrale Stelle: `exception/GlobalExceptionHandler.java`.
@@ -126,18 +134,49 @@ praktisch, für den Produktivbetrieb nicht geeignet.
 
 ---
 
+## Weboberfläche
+
+Unter `http://localhost:8080/` liegt eine Oberfläche für den kompletten
+CRUD-Zyklus: Liste anzeigen, anlegen, bearbeiten, löschen, filtern.
+
+Sie besteht aus drei Dateien in `src/main/resources/static/`:
+
+| Datei | Inhalt |
+|---|---|
+| `index.html` | Aufbau: Formular, Tabelle, Meldungsleiste |
+| `style.css` | Gestaltung, Mobilansicht unter 720 px |
+| `app.js` | Logik, `fetch`-Aufrufe, Validierung, Filtern |
+
+Kein Framework, kein Bundler, keine npm-Abhängigkeiten – Spring Boot
+liefert die Dateien selbst aus. Details, Begründungen und die dafür
+nötigen Backend-Änderungen stehen in **[FRONTEND.md](FRONTEND.md)**.
+
+**Bearbeiten:** Die angeklickte Zeile wird hervorgehoben, das Formular
+wechselt in den Änderungsmodus, der Button heißt jetzt "Speichern".
+
+![Bearbeiten](docs/screenshot-bearbeiten.png)
+
+**Validierung:** Geprüft wird im Browser *und* auf dem Server. Die
+Meldungen unter den Feldern kommen aus der Browser-Prüfung, der rote
+Balken oben aus der Antwort des Servers.
+
+![Validierung](docs/screenshot-validierung.png)
+
+---
+
 ## Tests
 
 ```bash
 ./mvnw test
 ```
 
-15 Tests, aufgeteilt auf zwei Klassen:
+21 Tests, aufgeteilt auf drei Klassen:
 
 | Klasse | Art | Was geprüft wird |
 |---|---|---|
-| `StudentServiceImplTest` | Unit-Test mit Mockito | Fachlogik: findet, wirft, speichert oder speichert bewusst nicht |
-| `StudentControllerTest` | `@WebMvcTest` mit MockMvc | HTTP-Statuscodes, Antwortformat, Validierung des Bodys |
+| `StudentServiceImplTest` | Unit-Test mit Mockito | Fachlogik: findet, wirft, speichert oder speichert bewusst nicht; Liste lesen; Alter ändern |
+| `StudentControllerTest` | `@WebMvcTest` mit MockMvc | HTTP-Statuscodes, Antwortformat, Validierung des Bodys, Liste |
+| `SpringbootProjektApplicationTests` | `@SpringBootTest` | Der Kontext startet überhaupt |
 
 Die Unit-Tests laufen ohne Spring und ohne Datenbank, dadurch in
 Millisekunden.
@@ -151,8 +190,9 @@ Millisekunden.
   Requests ist das eine Race Condition. Sauber wäre ein
   `UNIQUE KEY` auf `email` plus Abfangen der
   `DataIntegrityViolationException`.
-- **Kein Paging.** `GET /student` fehlt bewusst noch.
-- **Keine Authentifizierung.** Alle Endpunkte sind offen.
+- **Kein Paging.** `GET /student` liefert alle Datensätze ohne `Pageable`.
+  Bei einem großen Bestand müsste die Liste aufgeteilt werden.
+- **Weboberfläche ohne Login.** Wer den Port erreicht, kann alles ändern.
 - **Kein Flyway/Liquibase.** Das Schema entsteht über Hibernate.
 
 Diese Punkte sind bekannt und nicht übersehen.
