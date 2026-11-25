@@ -1,5 +1,7 @@
 # springbootProjekt — Studentenverwaltung
 
+[![Build und Tests](https://github.com/YutongQian/springboot-student-verwaltung/actions/workflows/build.yml/badge.svg)](https://github.com/YutongQian/springboot-student-verwaltung/actions/workflows/build.yml)
+
 Eine kleine REST-Anwendung mit Spring Boot, die einen CRUD-Zyklus für
 Studenten abbildet. Das Projekt ist als Lern- und Nachweisprojekt
 entstanden: Es zeigt Schichtentrennung, Bean Validation, zentrale
